@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Birthday Envelope Magic</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background-color: #ffccdd;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      position: relative;
+    }
+
+    .envelope-wrapper {
+      position: relative;
+      width: 320px;
+      height: 220px;
+      perspective: 1200px;
+      margin-bottom: 80px;
+    }
+
+    .envelope {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: white;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      background: linear-gradient(145deg, #ffffff, #f9f9f9);
+      transition: opacity 0.8s ease;
+    }
+
+    /* Top flap */
+    .envelope::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: white;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+      transform-origin: top;
+      transition: transform 0.8s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 3;
+      background: linear-gradient(145deg, #ffffff, #eeeeee);
+      border-bottom: 1px solid #ccc;
+    }
+
+    /* Bottom triangle */
+    .envelope::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: white;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      background: linear-gradient(145deg, #ffffff, #f0f0f0);
+      z-index: 1;
+    }
+
+    .letter {
+      position: absolute;
+      top: 5%;
+      left: 5%;
+      width: 90%;
+      height: 90%;
+      background: #fff0f5;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.4em;
+      color: #ff6699;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.8s ease, top 0.8s ease;
+      z-index: 2;
+      padding: 20px;
+    }
+
+    .stamp {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: #ff6699;
+      border: 3px dashed white;
+      border-radius: 5px;
+      z-index: 4;
+      transition: opacity 0.8s ease;
+    }
+
+    .address {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      width: 60%;
+      height: 40px;
+      z-index: 4;
+      transition: opacity 0.8s ease;
+    }
+
+    .address div {
+      height: 8px;
+      background: #ddd;
+      margin: 5px 0;
+      border-radius: 4px;
+    }
+
+    .open-button {
+      margin-top: 20px;
+      padding: 12px 30px;
+      background-color: #ff6699;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.2em;
+      transition: background-color 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      z-index: 5;
+    }
+
+    .open-button:hover {
+      background-color: #ff3366;
+    }
+
+    /* When opened */
+    .open .envelope::before {
+      transform: rotateX(-150deg);
+    }
+
+    .open .letter {
+      opacity: 1;
+      top: -50px;
+    }
+
+    .open .stamp,
+    .open .address {
+      opacity: 0;
+    }
+
+    /* Heart animation */
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      width: 20px;
+      height: 20px;
+      background-color: #ff4d6d;
+      transform: rotate(45deg);
+      animation: float 7s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #ff4d6d;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -10px;
+      top: 0;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(45deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(45deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="envelope-wrapper" id="envelopeWrapper">
+  <div class="envelope">
+    <div class="stamp"></div>
+    <div class="address">
+      <div></div>
+      <div></div>
+      <div style="width: 40%;"></div>
+    </div>
+  </div>
+  <div class="letter">🎉 Happy Birthday! 🎂<br>Hope your day is full of smiles! 💖</div>
+</div>
+
+<button class="open-button" onclick="openEnvelope()">Open Me</button>
+
+<script>
+  function openEnvelope() {
+    const wrapper = document.getElementById('envelopeWrapper');
+    wrapper.classList.add('open');
+
+    // Create a lot of hearts floating from the bottom
+    for (let i = 0; i < 50; i++) {
+      let heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.animationDuration = (Math.random() * 2 + 6) + 's';  // Adjust for a slower speed
+      document.body.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, 7000);  // heart disappears after animation
+    }
+  }
+</script>
+
+</body>
+</html>
